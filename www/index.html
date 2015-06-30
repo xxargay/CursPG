@@ -8,7 +8,7 @@
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
   <link rel="stylesheet" type="text/css" href="css/index.css" />
 
-    <title>Bater&iacute;a</title>
+    <title>Acceleròmetre</title>
 
 </head>
 <body>
@@ -16,14 +16,14 @@
 
 <div class="app">
 	<div id="deviceready" class="blink">
-		<p class="event listening">Conectando al Dispositivo</p>
+		<p class="event listening">Conectant al Dispositiu</p>
 	</div>
 	<h1>Bater&iacute;a</h1>
 	<div id="ready">
 		
 		<!-- Nuestro contenido HTML -->
 		<p class="resultado">
- 			<span id="resultado">No se ha mirado el estado de la bater&iacute;a</span><br />
+ 			<span id="resultado">No s'ha pogut mostrar valors acceleròmetre</span><br />
 		</p>
 
 		<!-- Fin de nuestro contenido HTML -->
@@ -48,45 +48,15 @@
 		document.getElementById('deviceready').setAttribute('style', 'display:none;');
 		document.getElementById('ready').setAttribute('style', 'display:block;');
 		
-		// los eventos de bateria se deben enganchar a window y no a document.
-		// Sino no funciona !!!
-		// http://plugins.cordova.io/#/package/org.apache.cordova.battery-status
-		window.addEventListener('batterystatus', BateriaStatus, false);
-		window.addEventListener('batterylow', BateriaBaja, false);
-		window.addEventListener('batterycritical', BateriaCritica, false);
+
+
+
+
+
+
 	}
 
-  // Funcion que muestra el estado de la bateria
-  //
-	function MostrarStatus(info){
-		var s = '<b>Estado de la bater&iacute;a</b><br/>';
-				s += 'Su carga es del ' + info.level + '%<br/>';
-				s += 'El dispositivo est&aacute; ' + (info.isPlugged ? 'enchufado' : 'desenchufado');
-		document.getElementById('resultado').innerHTML = s;
-	}
-
-  // Funcion que llama el sistema para dar info del estado de la bateria
-  //
-	function BateriaStatus(info){
-		console.log('Llega informaci&oacute;n de la bater&iacute;a');
-		MostrarStatus(info);
-	}
-
-  // Funcion que llama el sistema cuando la bateria esta baja
-  //
-	function BateriaBaja(info){
-		console.log('Llega informaci&oacute;n de que la bater&iacute;a est&aacute; baja');
-		navigator.notification.alert('La bater&iacute;a est&aacute; baja');
-		MostrarStatus(info);
-	}
-
-  // Funcion que llama el sistema cuando la bateria esta muy baja
-  //
-	function BateriaCritica(info){
-		console.log('Llega informaci&oacute;n de que la bater&iacute;a est&aacute; muy baja');
-		navigator.notification.alert('La bater&iacute;a est&aacute; muy baja');
-		MostrarStatus(info);
-	}
+ 
 
   /////////////////////////////
 	// fin de nuestro codigo
