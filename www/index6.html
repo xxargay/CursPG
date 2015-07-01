@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+  <link rel="stylesheet" type="text/css" href="css/index.css" />
+
+  <title>Br&uacute;jula</title>
+
+</head>
+<body>
+
+
+<div class="app">
+	<div id="deviceready" class="blink">
+		<p class="event listening">Conectando al Dispositivo</p>
+	</div>
+	<h1>Br&uacute;jula</h1>
+	<div id="ready">
+		
+		<!-- Nuestro contenido HTML -->
+		<div class="botones">
+			<button type="button" id="start">Empezar</button> <button type="button" id="stop">Parar</button> <button type="button" id="mirar">Mirar</button><br />
+		</div>
+		<p class="resultado">
+ 			Posici&oacute;n<br />
+ 			<span id="resultado">Br&uacute;jula parada</span><br />
+		</p>
+
+		<!-- Fin de nuestro contenido HTML -->
+
+
+	</div>
+</div>
+
+
+
+
+
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript">
+
+	document.addEventListener('deviceready', onDeviceReady, false);
+
+	// nuestro codigo
+	var idBrujula = null;
+
+  // el dispositivo esta listo
+  //
+	function onDeviceReady()
+	{
+		document.getElementById('deviceready').setAttribute('style', 'display:none;');
+		document.getElementById('ready').setAttribute('style', 'display:block;');
+		
+		document.getElementById('start').addEventListener("click", Empezar);
+		document.getElementById('stop').addEventListener("click", Parar);
+		document.getElementById('mirar').addEventListener("click", Mirar);
+	}
+
+
+    // Empezar a coger datos de la brujula
+    //
+    function Empezar() {
+    		console.log('Se ha pulsado Empezar');
+    		if (!idBrujula) {
+	    		console.log('Se pide mirar la posicion');
+	        // Se actualiza cada 300 milisegundos
+	        var opciones = { frequency: 300 };
+	        idBrujula = navigator.compass.watchHeading(onSuccess, onError, opciones);
+	    		console.log('Id = ' + idBrujula);
+	      }
+    }
+
+    // Parar
+    //
+    function Parar() {
+    		console.log('Se ha pulsado Parar');
+        if (idBrujula) {
+            navigator.compass.clearWatch(idBrujula);
+            idBrujula = null;
+		        document.getElementById('resultado').innerHTML = 'Br&uacute;jula parada';
+            
+        }
+    }
+
+    // Mirar los datos de la brujula
+    //
+    function Mirar() {
+    		console.log('Se ha pulsado Mirar');
+    		if (!idBrujula) {
+	    		console.log('Se pide mirar la posicion');
+	        navigator.compass.getCurrentHeading(onSuccess, onError);
+	      }
+    }
+
+    // onSuccess: Obtiene la posicion actual
+    //
+    function onSuccess(heading) {
+    		console.log('Apunta a: ' + heading.magneticHeading);
+        document.getElementById('resultado').innerHTML = 'Apunta a: ' + heading.magneticHeading;
+    }
+
+    // onError: Fallo al obtener la posicion
+    //
+    function onError(compassError) {
+        alert('Error br&uacute;jula: ' + compassError.code);
+    }
+
+
+</script>
+
+
+
+</body>
+</html>
