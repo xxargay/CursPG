@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+  <link rel="stylesheet" type="text/css" href="css/index.css" />
+
+  <title>Geolocalizaci&oacute;n (GPS)</title>
+
+</head>
+<body>
+
+
+<div class="app">
+	<div id="deviceready" class="blink">
+		<p class="event listening">Conectando al Dispositivo</p>
+	</div>
+	<h1>Geolocalizaci&oacute;n (GPS)</h1>
+	<div id="ready">
+		<!-- Nuestro contenido HTML -->
+
+		<div class="botones">
+			<button type="button" id="start">Empezar</button> <button type="button" id="stop">Parar</button> <button type="button" id="mirar">Mirar</button><br />
+		</div>
+		<p class="resultado">
+ 			Posici&oacute;n GPS<br />
+ 			<span id="resultado">No se ha consultado</span><br />
+		</p>
+
+		<!-- Fin de nuestro contenido HTML -->
+
+	</div>
+</div>
+
+
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript">
+
+  document.addEventListener('deviceready', onDeviceReady, false);
+
+  /////////////////////////////
+	// nuestro codigo
+  /////////////////////////////
+
+	// nuestro codigo
+	var idGPS = null;
+
+  // funcion que se ejecuta cuando el dispositivo esta listo
+  //
+	function onDeviceReady()
+	{
+		document.getElementById('deviceready').setAttribute('style', 'display:none;');
+		document.getElementById('ready').setAttribute('style', 'display:block;');
+		
+		document.getElementById('start').addEventListener("click", Empezar);
+		document.getElementById('stop').addEventListener("click", Parar);
+		document.getElementById('mirar').addEventListener("click", Mirar);
+	}
+
+    // Empezar a coger datos del GPS
+    //
+    function Empezar() {
+    		console.log('Se ha pulsado Empezar');
+    		if (!idGPS) {
+	    		console.log('Se pide mirar la posicion');
+	        // maximumAge -> Se acepta una posicion obtenida hasta n milisengundos antes
+	        // timeout -> Tiempo maximo de espera hasta dar error si no se obtiene la posicion
+	        // enableHighAccuracy -> Intenta obtener la posicion por GPS en lugar de por la red
+	        var opciones = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: false };
+	        idGPS = navigator.geolocation.watchPosition(onSuccess, onError, opciones);
+	    		console.log('Id = ' + idGPS);
+	      }
+    }
+
+    // Parar
+    //
+    function Parar() {
+    		console.log('Se ha pulsado Parar');
+        if (idGPS) {
+            navigator.geolocation.clearWatch(idGPS);
+            idGPS = null;
+		        document.getElementById('resultado').innerHTML = 'GPS parado';
+        }
+    }
+
+    // Mirar los datos del GPS
+    //
+    function Mirar() {
+    		console.log('Se ha pulsado Mirar');
+    		if (!idGPS) {
+	    		console.log('Se pide mirar la posicion');
+	        var opciones = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
+	        navigator.geolocation.getCurrentPosition(onSuccess, onError, opciones);
+	      }
+    }
+
+    // onSuccess: Obtiene la posicion GPS actual
+    //
+    function onSuccess(position) {
+    	var s = 'Latitud: '              + position.coords.latitude          + '<br />' +
+          'Longitud: '                 + position.coords.longitude         + '<br />' +
+          'Altitud: '                  + position.coords.altitude          + '<br />' +
+          'Precisi&oacute;n: '         + position.coords.accuracy          + '<br />' +
+          'Precisi&oacute;n altitud: ' + position.coords.altitudeAccuracy  + '<br />' +
+          'Grados: '                   + position.coords.heading           + '<br />' +
+          'Velocidad: '                + position.coords.speed             + '<br />' +
+          'Timestamp: '                + position.timestamp                + '<br />';
+    		console.log( s.replace('<br />','\n') );
+        document.getElementById('resultado').innerHTML = s;
+    }
+
+    // onError: Fallo al obtener la posicion del GPS
+    //
+    function onError(error) {
+    		var s = 'Se ha producido un error al leer la posici&oacute;n GPS\n' +
+          			'Mensaje de error: ' + error.message + '\n' +
+    						'C&oacute;odigo de error: ' + error.code + '\n';
+        alert(s);
+    }
+
+
+  /////////////////////////////
+	// fin de nuestro codigo
+  /////////////////////////////
+
+</script>
+
+
+
+</body>
+</html>

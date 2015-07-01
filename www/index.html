@@ -8,7 +8,7 @@
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
   <link rel="stylesheet" type="text/css" href="css/index.css" />
 
-  <title>Geolocalizaci&oacute;n (GPS)</title>
+  <title>Br&uacute;jula</title>
 
 </head>
 <body>
@@ -18,38 +18,38 @@
 	<div id="deviceready" class="blink">
 		<p class="event listening">Conectando al Dispositivo</p>
 	</div>
-	<h1>Geolocalizaci&oacute;n (GPS)</h1>
+	<h1>Br&uacute;jula</h1>
 	<div id="ready">
+		
 		<!-- Nuestro contenido HTML -->
-
 		<div class="botones">
 			<button type="button" id="start">Empezar</button> <button type="button" id="stop">Parar</button> <button type="button" id="mirar">Mirar</button><br />
 		</div>
 		<p class="resultado">
- 			Posici&oacute;n GPS<br />
- 			<span id="resultado">No se ha consultado</span><br />
+ 			Posici&oacute;n<br />
+ 			<span id="resultado">Br&uacute;jula parada</span><br />
 		</p>
 
 		<!-- Fin de nuestro contenido HTML -->
+
 
 	</div>
 </div>
 
 
 
+
+
+
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript">
 
-  document.addEventListener('deviceready', onDeviceReady, false);
-
-  /////////////////////////////
-	// nuestro codigo
-  /////////////////////////////
+	document.addEventListener('deviceready', onDeviceReady, false);
 
 	// nuestro codigo
-	var idGPS = null;
+	var idBrujula = null;
 
-  // funcion que se ejecuta cuando el dispositivo esta listo
+  // el dispositivo esta listo
   //
 	function onDeviceReady()
 	{
@@ -61,18 +61,17 @@
 		document.getElementById('mirar').addEventListener("click", Mirar);
 	}
 
-    // Empezar a coger datos del GPS
+
+    // Empezar a coger datos de la brujula
     //
     function Empezar() {
     		console.log('Se ha pulsado Empezar');
-    		if (!idGPS) {
+    		if (!idBrujula) {
 	    		console.log('Se pide mirar la posicion');
-	        // maximumAge -> Se acepta una posicion obtenida hasta n milisengundos antes
-	        // timeout -> Tiempo maximo de espera hasta dar error si no se obtiene la posicion
-	        // enableHighAccuracy -> Intenta obtener la posicion por GPS en lugar de por la red
-	        var opciones = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: false };
-	        idGPS = navigator.geolocation.watchPosition(onSuccess, onError, opciones);
-	    		console.log('Id = ' + idGPS);
+	        // Se actualiza cada 300 milisegundos
+	        var opciones = { frequency: 300 };
+	        idBrujula = navigator.compass.watchHeading(onSuccess, onError, opciones);
+	    		console.log('Id = ' + idBrujula);
 	      }
     }
 
@@ -80,52 +79,37 @@
     //
     function Parar() {
     		console.log('Se ha pulsado Parar');
-        if (idGPS) {
-            navigator.geolocation.clearWatch(idGPS);
-            idGPS = null;
-		        document.getElementById('resultado').innerHTML = 'GPS parado';
+        if (idBrujula) {
+            navigator.compass.clearWatch(idBrujula);
+            idBrujula = null;
+		        document.getElementById('resultado').innerHTML = 'Br&uacute;jula parada';
+            
         }
     }
 
-    // Mirar los datos del GPS
+    // Mirar los datos de la brujula
     //
     function Mirar() {
     		console.log('Se ha pulsado Mirar');
-    		if (!idGPS) {
+    		if (!idBrujula) {
 	    		console.log('Se pide mirar la posicion');
-	        var opciones = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
-	        navigator.geolocation.getCurrentPosition(onSuccess, onError, opciones);
+	        navigator.compass.getCurrentHeading(onSuccess, onError);
 	      }
     }
 
-    // onSuccess: Obtiene la posicion GPS actual
+    // onSuccess: Obtiene la posicion actual
     //
-    function onSuccess(position) {
-    	var s = 'Latitud: '              + position.coords.latitude          + '<br />' +
-          'Longitud: '                 + position.coords.longitude         + '<br />' +
-          'Altitud: '                  + position.coords.altitude          + '<br />' +
-          'Precisi&oacute;n: '         + position.coords.accuracy          + '<br />' +
-          'Precisi&oacute;n altitud: ' + position.coords.altitudeAccuracy  + '<br />' +
-          'Grados: '                   + position.coords.heading           + '<br />' +
-          'Velocidad: '                + position.coords.speed             + '<br />' +
-          'Timestamp: '                + position.timestamp                + '<br />';
-    		console.log( s.replace('<br />','\n') );
-        document.getElementById('resultado').innerHTML = s;
+    function onSuccess(heading) {
+    		console.log('Apunta a: ' + heading.magneticHeading);
+        document.getElementById('resultado').innerHTML = 'Apunta a: ' + heading.magneticHeading;
     }
 
-    // onError: Fallo al obtener la posicion del GPS
+    // onError: Fallo al obtener la posicion
     //
-    function onError(error) {
-    		var s = 'Se ha producido un error al leer la posici&oacute;n GPS\n' +
-          			'Mensaje de error: ' + error.message + '\n' +
-    						'C&oacute;odigo de error: ' + error.code + '\n';
-        alert(s);
+    function onError(compassError) {
+        alert('Error br&uacute;jula: ' + compassError.code);
     }
 
-
-  /////////////////////////////
-	// fin de nuestro codigo
-  /////////////////////////////
 
 </script>
 
