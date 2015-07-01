@@ -154,7 +154,7 @@
 			for(var i = 0; i < elementos.length; i++) {
 				if( !elementos[i].value ) continue; // si no tiene valor continuamos con el siguiente
 				if( s != '' ) s += ', '; // si ya hay algun valor separamos el siguiente con una coma
-				s += elementos[i].value;
+				s += '<a href="tel:' + elementos[i].value + '">'  + elementos[i].value + '</a>';
 				if( elementos[i].type ) s += ' (' + elementos[i].type + ')';
 				if( elementos[i].pref ) s += ' (preferido)';
 			}
