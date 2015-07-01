@@ -8,7 +8,7 @@
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
   <link rel="stylesheet" type="text/css" href="css/index.css" />
 
-  <title>Contactos</title>
+  <title>Di&acute;logos</title>
 
 </head>
 <body>
@@ -18,38 +18,19 @@
 	<div id="deviceready" class="blink">
 		<p class="event listening">Conectando al Dispositivo</p>
 	</div>
-	<h1>Contactos</h1>
+	<h1>Di&acute;logos</h1>
 	<div id="ready">
 		<!-- Nuestro contenido HTML -->
 
-		<form>
-			<label>Valor a buscar: </label>
-			<input type="text" id="textoabuscar" name="textoabuscar" value="" /><br />
-			<label>Campos a buscar: </label>
-			<select id="campo">
-				<option value="todos" selected="selected">Todos</option>
-				<option value="displayName">Nombre mostrado</option>
-				<option value="name">Nombre completo</option>
-				<option value="nickname">Alias</option>
-				<option value="phoneNumbers">Tel&eacute;fonos</option>
-				<option value="emails">eMails</option>
-				<option value="addresses">Direcciones</option>
-				<option value="ims">Perfiles de redes sociales</option>
-				<option value="organizations">Organizaciones</option>
-				<option value="birthday">Cumplea&ntilde;os</option>
-				<option value="note">Notas</option>
-				<option value="categories">Categor&iacute;s</option>
-				<option value="urls">URL's</option>
-			</select>			
-		</form>
 		<div class="botones">
-			<button type="button" id="buscar">Buscar</button>
+			<button type="button" id="alerta">Alerta</button>
+			<button type="button" id="confirmacion">Confirmaci&oacute;n</button><br />
+			<button type="button" id="pregunta">Pregunta</button>
+			<button type="button" id="beep">Beeeeeep</button><br />
 		</div>
 		<p class="resultado">
- 			<span id="resultado">No se ha buscado nada</span><br />
+ 			<span id="resultado"></span><br />
 		</p>
-		<div id="contactos">
-		</div>
 
 		<!-- Fin de nuestro contenido HTML -->
 
@@ -63,18 +44,6 @@
 
   document.addEventListener('deviceready', onDeviceReady, false);
 
-	// trim elimina los espacios en blanco del principio y final de un string
-	// si no existe la funcion trim (ocurre en algunos navegadores) la definimos
-	if (!String.prototype.trim) {
-		(function() {
-			// Make sure we trim BOM and NBSP
-			var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
-			String.prototype.trim = function() {
-				return this.replace(rtrim, '');
-			};
-		})();
-	}
-
   /////////////////////////////
 	// nuestro codigo
   /////////////////////////////
@@ -86,149 +55,81 @@
 		document.getElementById('deviceready').setAttribute('style', 'display:none;');
 		document.getElementById('ready').setAttribute('style', 'display:block;');
 		
-		document.getElementById('buscar').addEventListener("click", Buscar);
-		// document.getElementById('stop').addEventListener("click", Parar);
+		document.getElementById('alerta').addEventListener("click", Alerta);
+		document.getElementById('confirmacion').addEventListener("click", Confirmacion);
+		document.getElementById('pregunta').addEventListener("click", Pregunta);
+		document.getElementById('beep').addEventListener("click", Beep);
 	}
 
-    // Funcion que se ejecuta cuando se pulsa Buscar
+    // Funcion que utilizo para mostrar en pantalla informacion
     //
-    function Buscar() {
-    	console.log('Se ha pulsado buscar');
-    	var e = document.getElementById('campo');
-    	var sCampoABuscar = e.options[e.selectedIndex].value;
-    	console.log('Campo = ' + sCampoABuscar);
-    	var sTextoABuscar = document.getElementById('textoabuscar').value;
-    	sTextoABuscar = sTextoABuscar.trim();
-    	console.log('Texto = ' + sTextoABuscar);
-    	var campos = [];
-    	if(sCampoABuscar == 'todos') {
-    		campos = [ '*' ];
-    	}
-    	else {
-    		campos = [ sCampoABuscar ];
-    	}
-    	var opciones = {
-    		filter: sTextoABuscar, // Filtro de busqueda. Devolvera los contactos que contengan este valor. Si esta vacio devolvera todos
-    		multiple: true, // se buscan todos los registros. Si fuera false se buscaria solo 1
-    	};
-    	navigator.contacts.find(campos, onSuccess, onError, opciones);
+    function MostrarTexto(s) {
+    	console.log(s.replace('<br />','\n'));
+      document.getElementById('resultado').innerHTML = s;
     }
 
-
-    // Para obtener el nombre del campo ContactName
+    // Funcion que se ejecuta cuando se pulsa Alerta
     //
-		function ObtenerNombre(displayName,contactName){
-
-			// Si displayName tiene valor lo devolvemos
-			if( displayName && displayName !== '') return displayName;
-
-			if( !contactName || typeof contactName === 'undefined' ) return 'No definido'; // no esta definido nada referente al nombre
-
-			// sino comprobamos el nombre ya formateado (nombre y apellidos juntos). Si existe se devuelve
-			if( contactName.hasOwnProperty('formatted') && contactName.formatted && contactName.formatted !== '') return contactName.formatted;
-
-			// sino probaremos con el nombre y apellido
-			var s = '';
-
-			if( contactName.hasOwnProperty('givenName') && contactName.givenName && contactName.givenName !== '' ) s = contactName.givenName;
-
-			if( contactName.hasOwnProperty('familyName') && contactName.familyName && contactName.familyName !== '' ){
-				if( s != '' ) s += ' '; // si ya hay nombre anyadimos un espacio
-				s += contactName.givenName;
-			}
-
-			if( s == '' ) return 'No definido';
-			return s;
-
-		}
-    // Para obtener un listado de los elementos que pueden contener mas de un valor
-    // como telefono, email, perfiles redes sociales, etc.
-    //
-		function ObtenerListado(elementos){
-
-			// comprobamos que el array tenga algun valor, sino devuelve "No definido"
-			if( !elementos || typeof elementos === 'undefined' || elementos.length == 0 ) return 'No definido';
-
-			var s = '';
-
-			for(var i = 0; i < elementos.length; i++) {
-				if( !elementos[i].value ) continue; // si no tiene valor continuamos con el siguiente
-				if( s != '' ) s += ', '; // si ya hay algun valor separamos el siguiente con una coma
-				s += '<a href="tel:' + elementos[i].value + '">'  + elementos[i].value + '</a>';
-				if( elementos[i].type ) s += ' (' + elementos[i].type + ')';
-				if( elementos[i].pref ) s += ' (preferido)';
-			}
-
-			return s;
-
-		}
-		
-
-    // onSuccess: Se ha realizado la busqueda correctamente
-    //
-		function onSuccess(contactos) {
-   		var s = ( contactos.length == 1 ? 'Se ha encontrado 1 contacto' : 'Se han encontrado ' + contactos.length + ' contactos' );
-			document.getElementById('resultado').innerHTML = s;
-
-			if( contactos.length == 0 ){
-		    	document.getElementById('contactos').innerHTML = '';
-					return;
-			}
-
-			s = '<table class="contactos"><tr>';
-
-			var camposAMostrar = ['Nombre', 'Tel&eacute;fonos', 'eMails' ];
-
-			for(var i = 0; i < camposAMostrar.length; i++) {
-				s += '<td>' + camposAMostrar[i] + '</td>';
-			}
-
-			s += '</tr>';
-
-			for(var i = 0; i < contactos.length; i++) {
-				console.log("Display Name = " + contactos[i].displayName);
-				// creamos una fila por cada contacto
-				s += '<tr>';
-				
-				// mostramos el Nombre. Si es nulo se muestra "No definido"
-				s += '<td>' + ObtenerNombre( contactos[i].displayName, contactos[i].name ) + '</td>';
-				
-				// mostramos los telefonos. Si es nulo se muestra "No definido"
-				s += '<td>' + ObtenerListado( contactos[i].phoneNumbers ) + '</td>';
-
-				// mostramos los mails. Si es nulo se muestra "No definido"
-				s += '<td>' + ObtenerListado( contactos[i].emails ) + '</td>';
-
-				// una fila por cada contacto
-				s += '</tr>';
-			}
-
-			s += '<table class="contactos"><tr>';
-
-    	document.getElementById('contactos').innerHTML = s;
-
-		}
-
-
-    // onError: Fallo al realizar la busqueda
-    //
-    function onError(error) {
-			var sError = 'Desconocido';
-			switch(error.code) {
-				case ContactError.INVALID_ARGUMENT_ERROR: sError = 'Argumentos incorrectos'; break;
-				case ContactError.TIMEOUT_ERROR: sError = 'Tiempo excedido'; break;
-				case ContactError.PENDING_OPERATION_ERROR: sError = 'Se ha quedado pendiente'; break;
-				case ContactError.IO_ERROR: sError = 'Ha fallado la entrada / salida'; break;
-				case ContactError.NOT_SUPPORTED_ERROR: sError = 'Funcionalidad no soportada'; break;
-				case ContactError.PERMISSION_DENIED_ERROR: sError = 'Permiso denegado'; break;
-			}
-			var s = 'Se ha producido un error al trabajar con los contactos\n' +
-				'Mensaje de error: ' + sError + '\n' +
-				'C&oacute;odigo de error: ' + error.code + '\n';
-			document.getElementById('resultado').innerHTML = s;
-    	document.getElementById('contactos').innerHTML = '';
+    function Alerta() {
+    	console.log('Se ha pulsado Alerta');
+			navigator.notification.alert(
+			    'Est&aacute;s en un curso de PhoneGap',  // mensaje
+					function (){ MostrarTexto('Se ha cerrado la alerta'); },	// funcion que se ejecuta cuando se pulsa el boton
+			    'Atenci&oacute;n',            // titulo del dialogo
+			    'Cierto'                  // Nombre del boton
+			);
     }
 
+    // Funcion que se ejecuta cuando se pulsa Parar
+    //
+    function Confirmacion() {
+    	console.log('Se ha pulsado Empezar');
+			navigator.notification.confirm(
+			    '¿Est&aacute;s en un curso de PhoneGap?',  // mensaje
+					CerrarConfirmacion,	// funcion que se ejecuta cuando se pulsa el boton. 
+					// Recibe como parametro el numero del boton pulsado: 1, 2, 3 y 0 en caso de cerrar con la X
+			    'Confirmaci&oacute;n',	// titulo del dialogo
+			    ['S&iacute;','No']		// Nombre de los botones. Es posible hasta 3 de ellos
+			);
+    }
+    // Funcion que se ejecuta cuando se cierra el dialogo de Confirmacion
+    //
+    function CerrarConfirmacion(indiceBoton){
+    	var s = 'Se ha cerrado el di&aacute;logo de confirmaci&ocaute;n.<br />';
+    	s += 'Se ha elegido el bot&oacute;n: ' +  indiceBoton + '<br />';
+    	MostrarTexto(s);
+    }
+
+    // Funcion que se ejecuta cuando se pulsa Pregunta
+    //
+    function Pregunta() {
+    	console.log('Se ha pulsado Pregunta');
+			navigator.notification.prompt(
+			    '¿Com&oacute;o te llamas?',  // mensaje
+					CerrarPregunta,         // funcion que se ejecuta cuando se pulsa el boton. 
+					// Recibe como parametro el objeto res
+			    'Pregunta',            // titulo del dialogo
+			    ['He acabado'],                  // Nombre de los botones. Es posible hasta 3 de ellos
+			    'No te lo digo' // Contestacion por defecto.
+			);
+    }
+    // Funcion que se ejecuta cuando se cierra el dialogo de Confirmacion
+    //
+    function CerrarPregunta(res){
+    	// res.buttonIndex = numero del boton pulsado: 1, 2, 3 y 0 en caso de cerrar con la X
+    	// res.input1 = el texto que ha introducido el usuario
+    	var s = 'Se ha cerrado el di&aacute;logo de pregunta.<br />';
+    	s += 'Se ha elegido el bot&oacute;n: ' +  res.buttonIndex + '<br />';
+    	s += ' y te llamas: ' +  res.input1;
+    	MostrarTexto(s);
+    }
+
+    // Funcion que se ejecuta cuando se pulsa Beep
+    //
+    function Beep() {
+    	console.log('Se ha pulsado Beep');
+    	navigator.notification.beep(1); // numero de veces que suena
+    }
 
 
   /////////////////////////////
