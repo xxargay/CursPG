@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+  <link rel="stylesheet" type="text/css" href="css/index.css" />
+
+  <title>Idioma</title>
+
+</head>
+<body>
+
+
+<div class="app">
+	<div id="deviceready" class="blink">
+		<p class="event listening">Conectando al Dispositivo</p>
+	</div>
+	<h1>Idioma</h1>
+	<div id="ready">
+		<!-- Nuestro contenido HTML -->
+
+		<div class="botones">
+			<button type="button" id="lengua">Lengua</button>
+			<button type="button" id="nombre">Nombre</button>
+			<button type="button" id="fechaa">Fecha a</button><br />
+			<button type="button" id="afecha">A fecha</button>
+			<button type="button" id="fechapatron">Patrones Fecha</button>
+			<button type="button" id="fechanombre">Nombres Fecha</button><br />
+			<button type="button" id="horarioverano">Horario Verano</button>
+			<button type="button" id="primerdia">Primer D&iacute;a</button>
+			<button type="button" id="numeroa">N&uacute;mero a</button><br />
+			<button type="button" id="anumero">A n&uacute;mero</button>
+			<button type="button" id="numeropatron">Patr&oacute;n n&uacute;mero</button>
+			<button type="button" id="monedapatron">Patr&oacute;n moneda</button><br />
+		</div>
+		<p class="resultado">
+ 			<span id="resultado">No se ha consultado nada</span><br />
+		</p>
+
+		<!-- Fin de nuestro contenido HTML -->
+
+	</div>
+</div>
+
+
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript">
+
+  document.addEventListener('deviceready', onDeviceReady, false);
+
+  /////////////////////////////
+	// nuestro codigo
+  /////////////////////////////
+
+	var r = document.getElementById('resultado');
+  // funcion que se ejecuta cuando el dispositivo esta listo
+  //
+	function onDeviceReady()
+	{
+		document.getElementById('deviceready').setAttribute('style', 'display:none;');
+		document.getElementById('ready').setAttribute('style', 'display:block;');
+		
+		document.getElementById('lengua').addEventListener("click", Lengua);
+		document.getElementById('nombre').addEventListener("click", Nombre);
+		document.getElementById('fechaa').addEventListener("click", FechaA);
+		document.getElementById('afecha').addEventListener("click", AFecha);
+		document.getElementById('fechapatron').addEventListener("click", FechaPatron);
+		document.getElementById('fechanombre').addEventListener("click", FechaNombre);
+		document.getElementById('horarioverano').addEventListener("click", HorarioVerano);
+		document.getElementById('primerdia').addEventListener("click", PrimerDia);
+		document.getElementById('numeroa').addEventListener("click", NumeroA);
+		document.getElementById('anumero').addEventListener("click", ANumero);
+		document.getElementById('numeropatron').addEventListener("click", NumeroPatron);
+		document.getElementById('monedapatron').addEventListener("click", MonedaPatron);
+	}
+
+    function Lengua(){
+			navigator.globalization.getPreferredLanguage(
+			    function (language){ r.innerHTML = 'Lenguaje: ' + language.value; },
+        	function (error) { MostrarError('Error obteniendo el idioma',error); }
+			);
+    }
+    function Nombre(){
+			navigator.globalization.getLocaleName(
+			    function (locale){ r.innerHTML = 'Nombre: ' + locale.value; },
+        	function (error) { MostrarError('Error obteniendo obteniendo el nombre',error); }
+			);
+    }
+    function FechaA(){
+    	// Opciones
+    	// formatLength: short, medium, long, full
+    	// selector: date, time, date and time
+    	var opciones = {formatLength:'full', selector:'date and time'};
+			navigator.globalization.dateToString(
+      		new Date(),
+        	function (date) {r.innerHTML = 'Fecha: ' + date.value;},
+        	function (error) { MostrarError('Error obteniendo la cadena de la fecha',error); },
+        	opciones
+      );
+    }
+    function AFecha(){
+    	// Opciones
+    	// formatLength: short, medium, long, full
+    	// selector: date, time, date and time
+    	var opciones = {formatLength:'full', selector:'date and time'};
+    	var sFecha = '30 de junio de 2015 23:58';
+			navigator.globalization.stringToDate(
+      		sFecha,
+        	function (date){
+        		// en JavaScript enero es 0 y diciembre 11 !!!!
+        		var nMes = date.month+1; 
+        		var s = 'Par&aacute;metro de entrada: ' + sFecha + '<br />';
+        		s += 'Anyo: ' + date.year + '<br />';
+        		s += 'Mes: ' + nMes + '<br />';
+        		s += 'D&iacute;a: ' + date.day + '<br />';
+        		s += 'Hora: ' + date.hour + '<br />';
+        		s += 'Minutos: ' + date.minute + '<br />';
+        		s += 'Segundos: ' + date.second + '<br />';
+        		s += 'Milisegundos: ' + date.millisecond + '<br />';
+        		r.innerHTML = s;
+        	},
+        	function (error) { MostrarError('Error obteniendo la cadena de la fecha',error); },
+        	opciones
+      );
+    }
+    function FechaPatron(){
+    	// Opciones
+    	// formatLength: short, medium, long, full
+    	// selector: date, time, date and time
+    	var opciones = {formatLength:'full', selector:'date and time'};
+			navigator.globalization.getDatePattern(
+        	function (date){
+        		var s = 'Patr&oacute;n de fecha: ' + date.pattern + '<br />';
+        		s += 'Zona: ' + date.timezone + '<br />';
+        		s += 'Desplazamiento UTC: ' + date.utc_offset + '<br />';
+        		s += 'Desplazamiento por horario de verano: ' + date.dst_offset + '<br />';
+        		r.innerHTML = s;
+        	},
+        	function (error) { MostrarError('Error obteniendo el patr&oacute;n de la fecha',error); },
+        	opciones
+      );
+    }
+    function FechaNombre(){
+    	// Opciones
+    	// type: narrow, wide
+    	// item: months, days
+    	var opciones = {type:'wide', item:'days'};
+			navigator.globalization.getDateNames(
+        	function (names){
+        		var s = 'Varlores recuperados: ' + opciones.item + '<br />';
+						for(var i = 0; i < names.value.length; i++){
+							s += i + ': ' + names.value[i] + '<br />';
+						}
+        		r.innerHTML = s;
+        	},
+        	function (error) { MostrarError('Error obteniendo los nombres para las fechas',error); },
+        	opciones
+      );
+    }
+    function HorarioVerano(){
+			navigator.globalization.isDayLightSavingsTime(
+					new Date(),
+        	function (date){
+        		var s = 'Desplazamiento por horario de verano: ' + (date.dst ? 'S&Iacute;' : 'NO') + '<br />';
+        		r.innerHTML = s;
+        	},
+        	function (error) { MostrarError('Error obteniendo si es horario de verano',error); }
+      );
+    }
+    function PrimerDia(){
+    	// los dias de la semana van de 1 a 7
+    	// siendo 1 domingo, 2 lunes, 3 martes ... 6 sabado
+			navigator.globalization.getFirstDayOfWeek(
+        	function (day){
+        		var s = 'Primer d&iacute;a de la semana: ' + day.value + '<br />';
+        		r.innerHTML = s;
+        	},
+        	function (error) { MostrarError('Error obteniendo el primer d&iacute;a de la semana',error); }
+      );
+    }
+    function NumeroA(){
+    	// Opciones
+    	// type: decimal, percent, currency
+    	var opciones = {type:'currency'};  // tipo mondeda
+    	var numero = 225.37;
+			navigator.globalization.numberToString(
+					numero,
+        	function (number){
+        		var s = 'Valor de entrada: ' + numero + '<br />';
+        		s += 'Tipo de valor: ' + opciones.type + '<br />';
+						s += 'Valor devuelto: ' + number.value + '<br />';
+        		r.innerHTML = s;
+        	},
+        	function (error) { MostrarError('Error obteniendo la conversi&oacute;n del n&uacute;mero a string',error); },
+        	opciones
+      );
+    }
+    function ANumero(){
+    	// Opciones
+    	// type: decimal, percent, currency
+    	var opciones = {type:'decimal'};
+    	var numero = '225,37';
+			navigator.globalization.stringToNumber(
+					numero,
+        	function (number){
+        		var s = 'Valor de entrada: ' + numero + '<br />';
+        		s += 'Tipo de valor: ' + opciones.type + '<br />';
+						s += 'Valor devuelto: ' + number.value + '<br />';
+        		r.innerHTML = s;
+        	},
+        	function (error) { MostrarError('Error obteniendo la conversi&oacute;n del string a n&uacute;mero',error); },
+        	opciones
+      );
+    }
+    function NumeroPatron(){
+    	// Opciones
+    	// type: decimal, percent, currency
+    	var opciones = {type:'currency'};  // tipo mondeda
+			navigator.globalization.getNumberPattern(
+        	function (pattern){
+        		var s = 'Tipo de valor: ' + opciones.type + '<br />';
+						s += 'Patr&oacute;n: '  + pattern.pattern  + '<br />';
+						s += 'S&iacute;mbolo: '   + pattern.symbol   + '<br />';
+						s += 'Fracci&oacute;n: ' + pattern.fraction + '<br />';
+						s += 'Redondeo: ' + pattern.rounding + '<br />';
+						s += 'Positivo: ' + pattern.positive + '<br />';
+						s += 'Negativo: ' + pattern.negative + '<br />';
+						s += 'Separador decimal: '  + pattern.decimal  + '<br />';
+						s += 'Separador de miles: ' + pattern.grouping;
+        		r.innerHTML = s;
+        	},
+        	function (error) { MostrarError('Error obteniendo la conversi&oacute;n del string a n&uacute;mero',error); },
+        	opciones
+      );
+    }
+    function MonedaPatron(){
+    	// currencyCode debe ser un string ISO 4217 de 3 letras (codigos de monedas)
+    	// https://es.wikipedia.org/wiki/ISO_4217
+    	// ejemplos comunes: 'USD', 'EUR'
+    	var currencyCode = 'EUR';
+			navigator.globalization.getCurrencyPattern(
+					currencyCode,
+        	function (pattern){
+        		var s = 'Moneda: ' + currencyCode + '<br />';
+						s = 'Patr&oacute;n: '  + pattern.pattern  + '<br />';
+						s += 'C&oacute;digo: '   + pattern.code   + '<br />';
+						s += 'Fracci&oacute;n: ' + pattern.fraction + '<br />';
+						s += 'Redondeo: ' + pattern.rounding + '<br />';
+						s += 'Positivo: ' + pattern.positive + '<br />';
+						s += 'Negativo: ' + pattern.negative + '<br />';
+						s += 'Separador decimal: '  + pattern.decimal  + '<br />';
+						s += 'Separador de miles: ' + pattern.grouping;
+        		r.innerHTML = s;
+        	},
+        	function (error) { MostrarError('Error obteniendo la conversi&oacute;n del string a n&uacute;ro',error); }
+      );
+    }
+
+    function MostrarError(mensaje,error){
+  		var s = mensaje + '<br />';
+			s += 'Mensaje de error: ' + error.message + '<br />';
+  		s += 'C&oacute;odigo de error: ' + error.code;
+  		r.innerHTML = 'Error obteniendo la conversi&oacute;n del string a n&uacute;ro';
+    }
+
+
+  /////////////////////////////
+	// fin de nuestro codigo
+  /////////////////////////////
+
+</script>
+
+
+
+</body>
+</html>

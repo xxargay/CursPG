@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+  <link rel="stylesheet" type="text/css" href="css/index.css" />
+
+  <title>Conexi&oacute;n</title>
+
+</head>
+<body>
+
+
+<div class="app">
+	<div id="deviceready" class="blink">
+		<p class="event listening">Connecting to Device</p>
+	</div>
+	<h1>Conexi&oacute;n</h1>
+	<div id="ready">
+		<!-- Nuestro contenido HTML -->
+
+		<p class="resultado">
+ 			<span id="resultado"></span><br />
+		</p>
+		<div class="botones">
+			<button type="button" id="comprobar">Comprobar</button><br />
+		</div>
+
+		<!-- Fin de nuestro contenido HTML -->
+
+	</div>
+</div>
+
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript">
+
+	document.addEventListener('deviceready', onDeviceReady, false);
+
+	// nuestro codigo
+
+  // el dispositivo esta listo
+  //
+	function onDeviceReady()
+	{
+		document.getElementById('deviceready').setAttribute('style', 'display:none;');
+		document.getElementById('ready').setAttribute('style', 'display:block;');
+
+		document.getElementById('comprobar').addEventListener("click", comprobarConexion);
+		document.addEventListener("offline", OffLine, false);
+		document.addEventListener("online", OnLine, false);
+	}
+
+  // Funcion que comprueba el estado de la conexion
+  //
+	function comprobarConexion() {
+		var networkState = navigator.connection.type;
+		var states = {};
+		states[Connection.UNKNOWN]  = 'Desconocida';
+		states[Connection.ETHERNET] = 'Ethernet (cable de red)';
+		states[Connection.WIFI]     = 'WiFi';
+		states[Connection.CELL_2G]  = '2G';
+		states[Connection.CELL_3G]  = '3G';
+		states[Connection.CELL_4G]  = '4G';
+		states[Connection.CELL]     = 'Gen&eacute;rica';
+		states[Connection.NONE]     = 'Sin conexi&oacute;n';
+		
+		document.getElementById('resultado').innerHTML = 'Tipo de Conexi&oacute;n: ' + states[networkState];
+	}
+
+  // Funcion que llama el sistema cuando el dispositivo pasa a no tener conexion a internet
+  //
+	function OffLine(){
+		var s = 'Se ha perdido la conexi&oacute;n a internet';
+		console.log(s);
+		document.getElementById('resultado').innerHTML = s;
+	}
+
+  // Funcion que llama el sistema cuando el dispositivo pasa a tener conexion a internet
+  //
+	function OnLine(){
+		var s = 'Se ha recuperado la conexi&oacute;n a internet';
+		console.log(s);
+		document.getElementById('resultado').innerHTML = s;
+	}
+
+
+</script>
+
+
+
+</body>
+</html>

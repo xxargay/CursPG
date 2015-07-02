@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+  <link rel="stylesheet" type="text/css" href="css/index.css" />
+
+  <title>Di&acute;logos</title>
+
+</head>
+<body>
+
+
+<div class="app">
+	<div id="deviceready" class="blink">
+		<p class="event listening">Conectando al Dispositivo</p>
+	</div>
+	<h1>Di&acute;logos</h1>
+	<div id="ready">
+		<!-- Nuestro contenido HTML -->
+
+		<div class="botones">
+			<button type="button" id="alerta">Alerta</button>
+			<button type="button" id="confirmacion">Confirmaci&oacute;n</button><br />
+			<button type="button" id="pregunta">Pregunta</button>
+			<button type="button" id="beep">Beeeeeep</button><br />
+		</div>
+		<p class="resultado">
+ 			<span id="resultado"></span><br />
+		</p>
+
+		<!-- Fin de nuestro contenido HTML -->
+
+	</div>
+</div>
+
+
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript">
+
+  document.addEventListener('deviceready', onDeviceReady, false);
+
+  /////////////////////////////
+	// nuestro codigo
+  /////////////////////////////
+
+	function AUnicode(s){
+		var e = document.createElement('div');
+		e.innerHTML = s;
+		return e.childNodes[0].nodeValue;
+	}
+
+
+	var sTexto = '&iquest;&aacute; ¿á '
+
+  // funcion que se ejecuta cuando el dispositivo esta listo
+  //
+	function onDeviceReady()
+	{
+		document.getElementById('deviceready').setAttribute('style', 'display:none;');
+		document.getElementById('ready').setAttribute('style', 'display:block;');
+		
+		document.getElementById('alerta').addEventListener("click", Alerta);
+		document.getElementById('confirmacion').addEventListener("click", Confirmacion);
+		document.getElementById('pregunta').addEventListener("click", Pregunta);
+		document.getElementById('beep').addEventListener("click", Beep);
+	}
+
+    // Funcion que utilizo para mostrar en pantalla informacion
+    //
+    function MostrarTexto(s) {
+    	console.log(s.replace('<br />','\n'));
+      document.getElementById('resultado').innerHTML = s;
+    }
+
+    // Funcion que se ejecuta cuando se pulsa Alerta
+    //
+    function Alerta() {
+    	console.log('Se ha pulsado Alerta');
+			navigator.notification.alert(
+ 			    AUnicode('Est&aacute;s en un curso de PhoneGap'),  // mensaje
+					function (){ MostrarTexto(AUnicode('Se ha cerrado la alerta')); },	// funcion que se ejecuta cuando se pulsa el boton
+			    AUnicode('Alerta'),            // titulo del dialogo
+			    AUnicode('Cierto')                  // Nombre del boton
+			);
+    }
+
+    // Funcion que se ejecuta cuando se pulsa Parar
+    //
+    function Confirmacion() {
+    	console.log('Se ha pulsado Empezar');
+			navigator.notification.confirm(
+			    AUnicode('&iquest;Est&aacute;s en un curso de PhoneGap?'),  // mensaje
+					CerrarConfirmacion,	// funcion que se ejecuta cuando se pulsa el boton. 
+					// Recibe como parametro el numero del boton pulsado: 1, 2, 3 y 0 en caso de cerrar con la X
+			    AUnicode('Confirmaci&oacute;n'),	// titulo del dialogo
+			    [AUnicode('S&iacute;'),AUnicode('No')]		// Nombre de los botones. Es posible hasta 3 de ellos
+			);
+    }
+    // Funcion que se ejecuta cuando se cierra el dialogo de Confirmacion
+    //
+    function CerrarConfirmacion(indiceBoton){
+    	var s = 'Se ha cerrado el di&aacute;logo de confirmaci&oacute;n.<br />';
+    	s += 'Se ha elegido el bot&oacute;n: ' +  indiceBoton + '<br />';
+    	MostrarTexto(s);
+    }
+
+    // Funcion que se ejecuta cuando se pulsa Pregunta
+    //
+    function Pregunta() {
+    	console.log('Se ha pulsado Pregunta');
+			navigator.notification.prompt(
+			    AUnicode('&iquest;C&oacute;mo te llamas?'),  // mensaje
+					CerrarPregunta,         // funcion que se ejecuta cuando se pulsa el boton. 
+					// Recibe como parametro el objeto res
+			    AUnicode('Pregunta'),            // titulo del dialogo
+			    [AUnicode('He acabado')],                  // Nombre de los botones. Es posible hasta 3 de ellos
+			    AUnicode('No te lo digo') // Contestacion por defecto.
+			);
+    }
+    // Funcion que se ejecuta cuando se cierra el dialogo de Confirmacion
+    //
+    function CerrarPregunta(res){
+    	// res.buttonIndex = numero del boton pulsado: 1, 2, 3 y 0 en caso de cerrar con la X
+    	// res.input1 = el texto que ha introducido el usuario
+    	var s = 'Se ha cerrado el di&aacute;logo de pregunta.<br />';
+    	s += 'Se ha elegido el bot&oacute;n: ' +  res.buttonIndex + '<br />';
+    	s += ' y te llamas: ' +  res.input1;
+    	MostrarTexto(s);
+    }
+
+    // Funcion que se ejecuta cuando se pulsa Beep
+    //
+    function Beep() {
+    	console.log('Se ha pulsado Beep');
+    	navigator.notification.beep(1); // numero de veces que suena
+    }
+
+
+  /////////////////////////////
+	// fin de nuestro codigo
+  /////////////////////////////
+
+</script>
+
+
+
+</body>
+</html>

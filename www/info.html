@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+  <link rel="stylesheet" type="text/css" href="css/index.css" />
+
+  <title>Informaci&oacute;n del Dispositivo</title>
+
+</head>
+<body>
+
+
+<div class="app">
+	<div id="deviceready" class="blink">
+		<p class="event listening">Conectando al Dispositivo</p>
+	</div>
+	<h1>Informaci&oacute;n del Dispositivo</h1>
+	<div id="ready">
+		<!-- Nuestro contenido HTML -->
+
+		<div class="botones">
+			<button type="button" id="mirar">Mirar</button><br />
+		</div>
+		<p class="resultado">
+ 			<span id="resultado">No se ha consultado</span><br />
+		</p>
+
+		<!-- Fin de nuestro contenido HTML -->
+
+	</div>
+</div>
+
+
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript">
+
+  document.addEventListener('deviceready', onDeviceReady, false);
+
+  /////////////////////////////
+	// nuestro codigo
+  /////////////////////////////
+
+  // funcion que se ejecuta cuando el dispositivo esta listo
+  //
+	function onDeviceReady()
+	{
+		document.getElementById('deviceready').setAttribute('style', 'display:none;');
+		document.getElementById('ready').setAttribute('style', 'display:block;');
+		
+		document.getElementById('mirar').addEventListener("click", Mirar);
+	}
+
+    // Funcion que se ejecuta cuando se pulsa Mirar
+    //
+    function Mirar() {
+    	// device es una variable global
+    	console.log('Se ha pulsado Mirar');
+			var s = 'Nombre: '     + device.name     + '<br />' +
+              'Modelo: '    + device.model    + '<br />' +
+              'Versi&oacute;n Cordova: '  + device.cordova  + '<br />' +
+              'Platforma: ' + device.platform + '<br />' +
+              'UUID: '     + device.uuid     + '<br />' +
+              'Versi&oacute;n Dispositivo: '  + device.version  + '<br />';
+     	document.getElementById('resultado').innerHTML = s;
+    }
+
+
+  /////////////////////////////
+	// fin de nuestro codigo
+  /////////////////////////////
+
+</script>
+
+
+
+</body>
+</html>

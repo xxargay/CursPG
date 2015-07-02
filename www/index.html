@@ -8,7 +8,7 @@
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
   <link rel="stylesheet" type="text/css" href="css/index.css" />
 
-  <title>Di&acute;logos</title>
+  <title>Aceler&oacute;metro</title>
 
 </head>
 <body>
@@ -18,123 +18,115 @@
 	<div id="deviceready" class="blink">
 		<p class="event listening">Conectando al Dispositivo</p>
 	</div>
-	<h1>Di&acute;logos</h1>
+	<h1>Aceler&oacute;metro</h1>
 	<div id="ready">
-		<!-- Nuestro contenido HTML -->
 
+		<!-- Nuestro contenido HTML -->
 		<div class="botones">
-			<button type="button" id="alerta">Alerta</button>
-			<button type="button" id="confirmacion">Confirmaci&oacute;n</button><br />
-			<button type="button" id="pregunta">Pregunta</button>
-			<button type="button" id="beep">Beeeeeep</button><br />
+			<button type="button" id="start">Empezar</button> <button type="button" id="stop">Parar</button> <button type="button" id="mirar">Mirar</button><br />
 		</div>
 		<p class="resultado">
- 			<span id="resultado"></span><br />
+ 			Posici&oacute;n<br />
+ 			<span id="resultado">Aceler&oacute;metro parado</span><br />
+			<div id="cuadrado" style="width:60px;height:60px;background-color:green;position:absolute;left:50%;top:50%;margin-top:-30px;margin-right:-30px;"></div>
 		</p>
-
-		<!-- Fin de nuestro contenido HTML -->
 
 	</div>
 </div>
 
 
 
+
+
+</div>
+
+
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript">
 
-  document.addEventListener('deviceready', onDeviceReady, false);
 
-  /////////////////////////////
+	document.addEventListener('deviceready', onDeviceReady, false);
+
 	// nuestro codigo
-  /////////////////////////////
+	var id = null;
 
-  // funcion que se ejecuta cuando el dispositivo esta listo
+  // el dispositivo esta listo
   //
 	function onDeviceReady()
 	{
 		document.getElementById('deviceready').setAttribute('style', 'display:none;');
 		document.getElementById('ready').setAttribute('style', 'display:block;');
 		
-		document.getElementById('alerta').addEventListener("click", Alerta);
-		document.getElementById('confirmacion').addEventListener("click", Confirmacion);
-		document.getElementById('pregunta').addEventListener("click", Pregunta);
-		document.getElementById('beep').addEventListener("click", Beep);
+		document.getElementById('start').addEventListener("click", Empezar);
+		document.getElementById('stop').addEventListener("click", Parar);
+		document.getElementById('mirar').addEventListener("click", Mirar);
 	}
 
-    // Funcion que utilizo para mostrar en pantalla informacion
+
+    // Empezar a coger datos del acelerometro
     //
-    function MostrarTexto(s) {
-    	console.log(s.replace('<br />','\n'));
-      document.getElementById('resultado').innerHTML = s;
+    function Empezar() {
+    		console.log('Se ha pulsado Empezar');
+    		if (!id) {
+	    		console.log('Se pide mirar la posicion');
+	        // Se actualiza cada 300 milisegundos
+	        var opciones = { frequency: 300 };
+	        id = navigator.accelerometer.watchAcceleration(onSuccess, onError, opciones);
+	    		console.log('Id = ' + id);
+	      }
     }
 
-    // Funcion que se ejecuta cuando se pulsa Alerta
+    // Parar
     //
-    function Alerta() {
-    	console.log('Se ha pulsado Alerta');
-			navigator.notification.alert(
-			    'Est&aacute;s en un curso de PhoneGap',  // mensaje
-					function (){ MostrarTexto('Se ha cerrado la alerta'); },	// funcion que se ejecuta cuando se pulsa el boton
-			    'Atenci&oacute;n',            // titulo del dialogo
-			    'Cierto'                  // Nombre del boton
-			);
+    function Parar() {
+    		console.log('Se ha pulsado Parar');
+        if (id) {
+            navigator.accelerometer.clearWatch(id);
+            id = null;
+		        document.getElementById('resultado').innerHTML = 'Aceler&oacute;metro parado';
+            
+        }
     }
 
-    // Funcion que se ejecuta cuando se pulsa Parar
+    // Mirar los datos
     //
-    function Confirmacion() {
-    	console.log('Se ha pulsado Empezar');
-			navigator.notification.confirm(
-			    '¿Est&aacute;s en un curso de PhoneGap?',  // mensaje
-					CerrarConfirmacion,	// funcion que se ejecuta cuando se pulsa el boton. 
-					// Recibe como parametro el numero del boton pulsado: 1, 2, 3 y 0 en caso de cerrar con la X
-			    'Confirmaci&oacute;n',	// titulo del dialogo
-			    ['S&iacute;','No']		// Nombre de los botones. Es posible hasta 3 de ellos
-			);
-    }
-    // Funcion que se ejecuta cuando se cierra el dialogo de Confirmacion
-    //
-    function CerrarConfirmacion(indiceBoton){
-    	var s = 'Se ha cerrado el di&aacute;logo de confirmaci&ocaute;n.<br />';
-    	s += 'Se ha elegido el bot&oacute;n: ' +  indiceBoton + '<br />';
-    	MostrarTexto(s);
+    function Mirar() {
+    		console.log('Se ha pulsado Mirar');
+        navigator.accelerometer.getCurrentAcceleration(onSuccess, onError);
     }
 
-    // Funcion que se ejecuta cuando se pulsa Pregunta
-    //
-    function Pregunta() {
-    	console.log('Se ha pulsado Pregunta');
-			navigator.notification.prompt(
-			    '¿Com&oacute;o te llamas?',  // mensaje
-					CerrarPregunta,         // funcion que se ejecuta cuando se pulsa el boton. 
-					// Recibe como parametro el objeto res
-			    'Pregunta',            // titulo del dialogo
-			    ['He acabado'],                  // Nombre de los botones. Es posible hasta 3 de ellos
-			    'No te lo digo' // Contestacion por defecto.
-			);
-    }
-    // Funcion que se ejecuta cuando se cierra el dialogo de Confirmacion
-    //
-    function CerrarPregunta(res){
-    	// res.buttonIndex = numero del boton pulsado: 1, 2, 3 y 0 en caso de cerrar con la X
-    	// res.input1 = el texto que ha introducido el usuario
-    	var s = 'Se ha cerrado el di&aacute;logo de pregunta.<br />';
-    	s += 'Se ha elegido el bot&oacute;n: ' +  res.buttonIndex + '<br />';
-    	s += ' y te llamas: ' +  res.input1;
-    	MostrarTexto(s);
-    }
+		function APorcentaje(n){
+			while(n>10) n--; // quitamos algun valor mayor que 10
+			while(n<-10) n++; // quitamos algun valor menor que -10
+			n += 10; // ahora n es un valor entre 0 y 20
+			return 100*n/20 + '%';
+		}
 
-    // Funcion que se ejecuta cuando se pulsa Beep
+    // onSuccess: Obtiene la posicion actual
     //
-    function Beep() {
-    	console.log('Se ha pulsado Beep');
-    	navigator.notification.beep(1); // numero de veces que suena
+    function onSuccess(acceleration) {
+    	 var salida = 'X = ' + acceleration.x + '<br />' +
+    	 							'Y = ' + acceleration.y + '<br />' +
+    	 							'Z = ' + acceleration.z + '<br />' +
+    	 							'T = ' + acceleration.timestamp + '<br />' +
+    	 							'x% = ' + APorcentaje(acceleration.x) + '<br />' +
+    	 							'y% = ' + APorcentaje(acceleration.y) + '<br />';
+    		console.log(salida);
+        document.getElementById('resultado').innerHTML = salida;
+				var x = acceleration.x; // el rango de valores va de -10 a 10 
+				var y = acceleration.y; // el rango de valores va de -10 a 10 
+				var z = acceleration.z; // el rango de valores va de -10 a 10 -> 10 = boca arriba y -10 = boca abajo
+				document.getElementById('cuadrado').style.left = APorcentaje(x);
+				document.getElementById('cuadrado').style.top = APorcentaje(y);
+				
     }
 
+    // onError: Fallo al obtener la posicion
+    //
+    function onError() {
+        alert('Error acelerometro');
+    }
 
-  /////////////////////////////
-	// fin de nuestro codigo
-  /////////////////////////////
 
 </script>
 

@@ -118,49 +118,44 @@
     // Para obtener el nombre del campo ContactName
     //
 		function ObtenerNombre(displayName,contactName){
-
 			// Si displayName tiene valor lo devolvemos
 			if( displayName && displayName !== '') return displayName;
-
 			if( !contactName || typeof contactName === 'undefined' ) return 'No definido'; // no esta definido nada referente al nombre
-
 			// sino comprobamos el nombre ya formateado (nombre y apellidos juntos). Si existe se devuelve
 			if( contactName.hasOwnProperty('formatted') && contactName.formatted && contactName.formatted !== '') return contactName.formatted;
-
 			// sino probaremos con el nombre y apellido
 			var s = '';
-
 			if( contactName.hasOwnProperty('givenName') && contactName.givenName && contactName.givenName !== '' ) s = contactName.givenName;
-
 			if( contactName.hasOwnProperty('familyName') && contactName.familyName && contactName.familyName !== '' ){
 				if( s != '' ) s += ' '; // si ya hay nombre anyadimos un espacio
 				s += contactName.givenName;
 			}
-
 			if( s == '' ) return 'No definido';
 			return s;
-
 		}
     // Para obtener un listado de los elementos que pueden contener mas de un valor
     // como telefono, email, perfiles redes sociales, etc.
     //
-		function ObtenerListado(elementos){
-
+		function ObtenerListado(elementos,tipo){
 			// comprobamos que el array tenga algun valor, sino devuelve "No definido"
 			if( !elementos || typeof elementos === 'undefined' || elementos.length == 0 ) return 'No definido';
-
 			var s = '';
-
 			for(var i = 0; i < elementos.length; i++) {
 				if( !elementos[i].value ) continue; // si no tiene valor continuamos con el siguiente
 				if( s != '' ) s += ', '; // si ya hay algun valor separamos el siguiente con una coma
-				s += '<a href="tel:' + elementos[i].value + '">'  + elementos[i].value + '</a>';
+				if( tipo == 'telefono' ){
+		    	console.log('telefono=' + elementos[i].value );
+					s += '<a href="tel:' + elementos[i].value + '">' + elementos[i].value + '</a>';
+		    	console.log('a href="tel:' + elementos[i].value + '"' + elementos[i].value);
+				}else if( tipo == 'mail' ){
+					s += '<a href="mailto:' + elementos[i].value + '">' + elementos[i].value + '</a>';
+				}else{
+					s += elementos[i].value;
+				}
 				if( elementos[i].type ) s += ' (' + elementos[i].type + ')';
 				if( elementos[i].pref ) s += ' (preferido)';
 			}
-
 			return s;
-
 		}
 		
 
@@ -169,22 +164,16 @@
 		function onSuccess(contactos) {
    		var s = ( contactos.length == 1 ? 'Se ha encontrado 1 contacto' : 'Se han encontrado ' + contactos.length + ' contactos' );
 			document.getElementById('resultado').innerHTML = s;
-
 			if( contactos.length == 0 ){
-		    	document.getElementById('contactos').innerHTML = '';
-					return;
+	    	document.getElementById('contactos').innerHTML = '';
+				return;
 			}
-
 			s = '<table class="contactos"><tr>';
-
 			var camposAMostrar = ['Nombre', 'Tel&eacute;fonos', 'eMails' ];
-
 			for(var i = 0; i < camposAMostrar.length; i++) {
 				s += '<td>' + camposAMostrar[i] + '</td>';
 			}
-
 			s += '</tr>';
-
 			for(var i = 0; i < contactos.length; i++) {
 				console.log("Display Name = " + contactos[i].displayName);
 				// creamos una fila por cada contacto
@@ -194,19 +183,16 @@
 				s += '<td>' + ObtenerNombre( contactos[i].displayName, contactos[i].name ) + '</td>';
 				
 				// mostramos los telefonos. Si es nulo se muestra "No definido"
-				s += '<td>' + ObtenerListado( contactos[i].phoneNumbers ) + '</td>';
+				s += '<td>' + ObtenerListado( contactos[i].phoneNumbers, 'telefono' ) + '</td>';
 
 				// mostramos los mails. Si es nulo se muestra "No definido"
-				s += '<td>' + ObtenerListado( contactos[i].emails ) + '</td>';
+				s += '<td>' + ObtenerListado( contactos[i].emails, 'mail' ) + '</td>';
 
 				// una fila por cada contacto
 				s += '</tr>';
 			}
-
 			s += '<table class="contactos"><tr>';
-
     	document.getElementById('contactos').innerHTML = s;
-
 		}
 
 
