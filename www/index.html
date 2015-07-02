@@ -8,7 +8,7 @@
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
   <link rel="stylesheet" type="text/css" href="css/index.css" />
 
-  <title>Aceler&oacute;metro</title>
+  <title>Contactos</title>
 
 </head>
 <body>
@@ -18,115 +18,208 @@
 	<div id="deviceready" class="blink">
 		<p class="event listening">Conectando al Dispositivo</p>
 	</div>
-	<h1>Aceler&oacute;metro</h1>
+	<h1>Contactos</h1>
 	<div id="ready">
-
 		<!-- Nuestro contenido HTML -->
+
+		<form>
+			<label>Valor a buscar: </label>
+			<input type="text" id="textoabuscar" name="textoabuscar" value="" /><br />
+			<label>Campos a buscar: </label>
+			<select id="campo">
+				<option value="todos" selected="selected">Todos</option>
+				<option value="displayName">Nombre mostrado</option>
+				<option value="name">Nombre completo</option>
+				<option value="nickname">Alias</option>
+				<option value="phoneNumbers">Tel&eacute;fonos</option>
+				<option value="emails">eMails</option>
+				<option value="addresses">Direcciones</option>
+				<option value="ims">Perfiles de redes sociales</option>
+				<option value="organizations">Organizaciones</option>
+				<option value="birthday">Cumplea&ntilde;os</option>
+				<option value="note">Notas</option>
+				<option value="categories">Categor&iacute;s</option>
+				<option value="urls">URL's</option>
+			</select>			
+		</form>
 		<div class="botones">
-			<button type="button" id="start">Empezar</button> <button type="button" id="stop">Parar</button> <button type="button" id="mirar">Mirar</button><br />
+			<button type="button" id="buscar">Buscar</button>
 		</div>
 		<p class="resultado">
- 			Posici&oacute;n<br />
- 			<span id="resultado">Aceler&oacute;metro parado</span><br />
-			<div id="cuadrado" style="width:60px;height:60px;background-color:green;position:absolute;left:50%;top:50%;margin-top:-30px;margin-right:-30px;"></div>
+ 			<span id="resultado">No se ha buscado nada</span><br />
 		</p>
+		<div id="contactos">
+		</div>
+
+		<!-- Fin de nuestro contenido HTML -->
 
 	</div>
 </div>
 
 
 
-
-
-</div>
-
-
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript">
 
+  document.addEventListener('deviceready', onDeviceReady, false);
 
-	document.addEventListener('deviceready', onDeviceReady, false);
+	// trim elimina los espacios en blanco del principio y final de un string
+	// si no existe la funcion trim (ocurre en algunos navegadores) la definimos
+	if (!String.prototype.trim) {
+		(function() {
+			// Make sure we trim BOM and NBSP
+			var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+			String.prototype.trim = function() {
+				return this.replace(rtrim, '');
+			};
+		})();
+	}
 
+  /////////////////////////////
 	// nuestro codigo
-	var id = null;
+  /////////////////////////////
 
-  // el dispositivo esta listo
+  // funcion que se ejecuta cuando el dispositivo esta listo
   //
 	function onDeviceReady()
 	{
 		document.getElementById('deviceready').setAttribute('style', 'display:none;');
 		document.getElementById('ready').setAttribute('style', 'display:block;');
 		
-		document.getElementById('start').addEventListener("click", Empezar);
-		document.getElementById('stop').addEventListener("click", Parar);
-		document.getElementById('mirar').addEventListener("click", Mirar);
+		document.getElementById('buscar').addEventListener("click", Buscar);
+		// document.getElementById('stop').addEventListener("click", Parar);
 	}
 
-
-    // Empezar a coger datos del acelerometro
+    // Funcion que se ejecuta cuando se pulsa Buscar
     //
-    function Empezar() {
-    		console.log('Se ha pulsado Empezar');
-    		if (!id) {
-	    		console.log('Se pide mirar la posicion');
-	        // Se actualiza cada 300 milisegundos
-	        var opciones = { frequency: 300 };
-	        id = navigator.accelerometer.watchAcceleration(onSuccess, onError, opciones);
-	    		console.log('Id = ' + id);
-	      }
+    function Buscar() {
+    	console.log('Se ha pulsado buscar');
+    	var e = document.getElementById('campo');
+    	var sCampoABuscar = e.options[e.selectedIndex].value;
+    	console.log('Campo = ' + sCampoABuscar);
+    	var sTextoABuscar = document.getElementById('textoabuscar').value;
+    	sTextoABuscar = sTextoABuscar.trim();
+    	console.log('Texto = ' + sTextoABuscar);
+    	var campos = [];
+    	if(sCampoABuscar == 'todos') {
+    		campos = [ '*' ];
+    	}
+    	else {
+    		campos = [ sCampoABuscar ];
+    	}
+    	var opciones = {
+    		filter: sTextoABuscar, // Filtro de busqueda. Devolvera los contactos que contengan este valor. Si esta vacio devolvera todos
+    		multiple: true, // se buscan todos los registros. Si fuera false se buscaria solo 1
+    	};
+    	navigator.contacts.find(campos, onSuccess, onError, opciones);
     }
 
-    // Parar
-    //
-    function Parar() {
-    		console.log('Se ha pulsado Parar');
-        if (id) {
-            navigator.accelerometer.clearWatch(id);
-            id = null;
-		        document.getElementById('resultado').innerHTML = 'Aceler&oacute;metro parado';
-            
-        }
-    }
 
-    // Mirar los datos
+    // Para obtener el nombre del campo ContactName
     //
-    function Mirar() {
-    		console.log('Se ha pulsado Mirar');
-        navigator.accelerometer.getCurrentAcceleration(onSuccess, onError);
-    }
+		function ObtenerNombre(displayName,contactName){
+			// Si displayName tiene valor lo devolvemos
+			if( displayName && displayName !== '') return displayName;
+			if( !contactName || typeof contactName === 'undefined' ) return 'No definido'; // no esta definido nada referente al nombre
+			// sino comprobamos el nombre ya formateado (nombre y apellidos juntos). Si existe se devuelve
+			if( contactName.hasOwnProperty('formatted') && contactName.formatted && contactName.formatted !== '') return contactName.formatted;
+			// sino probaremos con el nombre y apellido
+			var s = '';
+			if( contactName.hasOwnProperty('givenName') && contactName.givenName && contactName.givenName !== '' ) s = contactName.givenName;
+			if( contactName.hasOwnProperty('familyName') && contactName.familyName && contactName.familyName !== '' ){
+				if( s != '' ) s += ' '; // si ya hay nombre anyadimos un espacio
+				s += contactName.givenName;
+			}
+			if( s == '' ) return 'No definido';
+			return s;
+		}
+    // Para obtener un listado de los elementos que pueden contener mas de un valor
+    // como telefono, email, perfiles redes sociales, etc.
+    //
+		function ObtenerListado(elementos,tipo){
+			// comprobamos que el array tenga algun valor, sino devuelve "No definido"
+			if( !elementos || typeof elementos === 'undefined' || elementos.length == 0 ) return 'No definido';
+			var s = '';
+			for(var i = 0; i < elementos.length; i++) {
+				if( !elementos[i].value ) continue; // si no tiene valor continuamos con el siguiente
+				if( s != '' ) s += ', '; // si ya hay algun valor separamos el siguiente con una coma
+				if( tipo == 'telefono' ){
+		    	console.log('telefono=' + elementos[i].value );
+					s += '<a href="tel:' + elementos[i].value + '">' + elementos[i].value + '</a>';
+		    	console.log('a href="tel:' + elementos[i].value + '"' + elementos[i].value);
+				}else if( tipo == 'mail' ){
+					s += '<a href="mailto:' + elementos[i].value + '">' + elementos[i].value + '</a>';
+				}else{
+					s += elementos[i].value;
+				}
+				if( elementos[i].type ) s += ' (' + elementos[i].type + ')';
+				if( elementos[i].pref ) s += ' (preferido)';
+			}
+			return s;
+		}
+		
 
-		function APorcentaje(n){
-			while(n>10) n--; // quitamos algun valor mayor que 10
-			while(n<-10) n++; // quitamos algun valor menor que -10
-			n += 10; // ahora n es un valor entre 0 y 20
-			return 100*n/20 + '%';
+    // onSuccess: Se ha realizado la busqueda correctamente
+    //
+		function onSuccess(contactos) {
+   		var s = ( contactos.length == 1 ? 'Se ha encontrado 1 contacto' : 'Se han encontrado ' + contactos.length + ' contactos' );
+			document.getElementById('resultado').innerHTML = s;
+			if( contactos.length == 0 ){
+	    	document.getElementById('contactos').innerHTML = '';
+				return;
+			}
+			s = '<table class="contactos"><tr>';
+			var camposAMostrar = ['Nombre', 'Tel&eacute;fonos', 'eMails' ];
+			for(var i = 0; i < camposAMostrar.length; i++) {
+				s += '<td>' + camposAMostrar[i] + '</td>';
+			}
+			s += '</tr>';
+			for(var i = 0; i < contactos.length; i++) {
+				console.log("Display Name = " + contactos[i].displayName);
+				// creamos una fila por cada contacto
+				s += '<tr>';
+				
+				// mostramos el Nombre. Si es nulo se muestra "No definido"
+				s += '<td>' + ObtenerNombre( contactos[i].displayName, contactos[i].name ) + '</td>';
+				
+				// mostramos los telefonos. Si es nulo se muestra "No definido"
+				s += '<td>' + ObtenerListado( contactos[i].phoneNumbers, 'telefono' ) + '</td>';
+
+				// mostramos los mails. Si es nulo se muestra "No definido"
+				s += '<td>' + ObtenerListado( contactos[i].emails, 'mail' ) + '</td>';
+
+				// una fila por cada contacto
+				s += '</tr>';
+			}
+			s += '<table class="contactos"><tr>';
+    	document.getElementById('contactos').innerHTML = s;
 		}
 
-    // onSuccess: Obtiene la posicion actual
+
+    // onError: Fallo al realizar la busqueda
     //
-    function onSuccess(acceleration) {
-    	 var salida = 'X = ' + acceleration.x + '<br />' +
-    	 							'Y = ' + acceleration.y + '<br />' +
-    	 							'Z = ' + acceleration.z + '<br />' +
-    	 							'T = ' + acceleration.timestamp + '<br />' +
-    	 							'x% = ' + APorcentaje(acceleration.x) + '<br />' +
-    	 							'y% = ' + APorcentaje(acceleration.y) + '<br />';
-    		console.log(salida);
-        document.getElementById('resultado').innerHTML = salida;
-				var x = acceleration.x; // el rango de valores va de -10 a 10 
-				var y = acceleration.y; // el rango de valores va de -10 a 10 
-				var z = acceleration.z; // el rango de valores va de -10 a 10 -> 10 = boca arriba y -10 = boca abajo
-				document.getElementById('cuadrado').style.left = APorcentaje(x);
-				document.getElementById('cuadrado').style.top = APorcentaje(y);
-				
+    function onError(error) {
+			var sError = 'Desconocido';
+			switch(error.code) {
+				case ContactError.INVALID_ARGUMENT_ERROR: sError = 'Argumentos incorrectos'; break;
+				case ContactError.TIMEOUT_ERROR: sError = 'Tiempo excedido'; break;
+				case ContactError.PENDING_OPERATION_ERROR: sError = 'Se ha quedado pendiente'; break;
+				case ContactError.IO_ERROR: sError = 'Ha fallado la entrada / salida'; break;
+				case ContactError.NOT_SUPPORTED_ERROR: sError = 'Funcionalidad no soportada'; break;
+				case ContactError.PERMISSION_DENIED_ERROR: sError = 'Permiso denegado'; break;
+			}
+			var s = 'Se ha producido un error al trabajar con los contactos\n' +
+				'Mensaje de error: ' + sError + '\n' +
+				'C&oacute;odigo de error: ' + error.code + '\n';
+			document.getElementById('resultado').innerHTML = s;
+    	document.getElementById('contactos').innerHTML = '';
     }
 
-    // onError: Fallo al obtener la posicion
-    //
-    function onError() {
-        alert('Error acelerometro');
-    }
 
+
+  /////////////////////////////
+	// fin de nuestro codigo
+  /////////////////////////////
 
 </script>
 

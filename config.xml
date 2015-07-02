@@ -90,4 +90,14 @@
     <allow-intent href="itms-apps:*"/>
   </platform>
 
+  <!-- Direcciones desde las que se puede cargar contenido en la app. * significa desde cualquier sitio -->
+  <access origin="*"/>
+  
+  <!-- Para que deje hacer llamadas desde la app -->
+  <!-- http://rickluna.com/wp/2012/02/making-a-phone-call-from-within-phonegap-in-android-and-ios/ -->
+  <uses-permission android:autoLink="phone" />
+  <access origin="tel:*" launch-external="yes" />
+  <access origin="mailto:*" launch-external="yes" />
+
+
 </widget>

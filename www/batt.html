@@ -10,6 +10,13 @@
 
     <title>Bater&iacute;a</title>
 
+<style type="text/css">
+	#bateria{ width:100%; height:150px; border:1px solid green;}
+	#consum{ width:0%; height:150px; background-color:green;}
+
+
+</style>
+
 </head>
 <body>
 
@@ -21,6 +28,11 @@
 	<h1>Bater&iacute;a</h1>
 	<div id="ready">
 		
+		<div id="bateria">
+
+			<div id="consum"></div>
+
+		</div>
 		<!-- Nuestro contenido HTML -->
 		<p class="resultado">
  			<span id="resultado">No se ha mirado el estado de la bater&iacute;a</span><br />
@@ -63,6 +75,7 @@
 				s += 'Su carga es del ' + info.level + '%<br/>';
 				s += 'El dispositivo est&aacute; ' + (info.isPlugged ? 'enchufado' : 'desenchufado');
 		document.getElementById('resultado').innerHTML = s;
+		document.getElementById('consum').style.width = info.level + '%';
 	}
 
   // Funcion que llama el sistema para dar info del estado de la bateria
