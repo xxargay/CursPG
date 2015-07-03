@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+  <link rel="stylesheet" type="text/css" href="css/index.css" />
+
+  <title>Sonido</title>
+
+</head>
+<body>
+
+
+<div class="app">
+	<div id="deviceready" class="blink">
+		<p class="event listening">Conectando al Dispositivo</p>
+	</div>
+	<h1>Sonido</h1>
+	<div id="ready">
+		<!-- Nuestro contenido HTML -->
+
+		<div class="botones">
+			<button type="button" id="rec">Grabar</button><br />
+			<button type="button" id="stop-rec">Parar grabaci&oacute;n</button><br /><br />
+			<button type="button" id="play">Reproducir</button><br />
+			<button type="button" id="play2">Reproducir</button><br />
+		</div>
+		<p class="resultado">
+ 			Se grabar&aacute; un m&aacute;ximo de 10 segundos<br />
+ 			<span id="resultado"></span><br />
+		</p>
+
+		<!-- Fin de nuestro contenido HTML -->
+
+	</div>
+</div>
+
+
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript">
+
+  document.addEventListener('deviceready', onDeviceReady, false);
+
+  /////////////////////////////
+	// nuestro codigo
+  /////////////////////////////
+  
+  var fichero = 'migrabacion.arm';
+  var mediaRec = null;
+  var bGrabando = false;
+  var recTimer = null;
+
+	function MostrarBoton(boton){
+		document.getElementById('rec').setAttribute('style', 'display:none;');
+		document.getElementById('stop-rec').setAttribute('style', 'display:none;');
+		document.getElementById('play').setAttribute('style', 'display:none;');
+		if( boton ){
+			document.getElementById(boton).setAttribute('style', 'display:block;');
+		}
+	}
+
+  // funcion que se ejecuta cuando el dispositivo esta listo
+  //
+	function onDeviceReady()
+	{
+		document.getElementById('deviceready').setAttribute('style', 'display:none;');
+		document.getElementById('ready').setAttribute('style', 'display:block;');
+		
+		document.getElementById('rec').addEventListener("click", Grabar);
+		document.getElementById('stop-rec').addEventListener("click", Parar);
+		document.getElementById('play').addEventListener("click", Play);
+		document.getElementById('play2').addEventListener("click", Play2);
+		MostrarBoton('rec');
+	}
+
+  // Funcion para parar la grabacion
+  //
+  function PararGrabacion() {
+  	if( bGrabando ){
+  		bGrabando = false;
+			if( recTimer ){
+				clearInterval(recTimer);
+				recTimer = null;
+			}
+			MostrarBoton('play');
+			if( mediaRec ){
+				mediaRec.stopRecord();
+			}
+		}
+	}
+
+  // Funcion que se ejecuta cuando se produce un error al grabar
+  //
+	function onError(error) {
+		var s = 'Se ha producido un error al grabar el sonido<br />' +
+						'Mensaje de error: ' + error.message + '<br />' +
+						'C&oacute;odigo de error: ' + error.code + '<br />';
+		document.getElementById('resultado').innerHTML = s;
+ 		bGrabando = false;
+  	mediaRec = null;
+		MostrarBoton('rec');
+	}
+	
+	function onSuccess(){
+		document.getElementById('resultado').innerHTML = 'Grabaci&oacute;n correcta. Se han grabado ' + mediaRec.getDuration();
+		MostrarBoton('play');
+  }
+
+
+
+  // Funcion que se ejecuta cuando se pulsa Grabar
+  //
+  function Grabar() {
+		console.log('Se ha pulsado Grabar');
+		MostrarBoton('stop-rec');
+
+		mediaRec = new Media(fichero, onSuccess, onError);
+		// Record audio
+		mediaRec.startRecord();
+		bGrabando = true;
+		// Stop recording after 10 sec
+		var recTime = 0;
+		recTimer = setInterval(
+			function(){
+				recTime = recTime + 1;
+				document.getElementById('resultado').innerHTML = 'Grabados ' + recTime + ' segundos';
+				if(recTime >= 10) {
+					PararGrabacion();
+				}
+			}, 1000
+		);
+  }
+
+  // Funcion que se ejecuta cuando se pulsa Parar
+  //
+  function Parar() {
+		console.log('Se ha pulsado Parar');
+		PararGrabacion();
+  }
+
+  // Funcion que se ejecuta cuando se pulsa Play
+  //
+  function Play() {
+		console.log('Se ha pulsado Play');
+		if( mediaRec ){
+			MostrarBoton(null);
+			media.seekTo(0);
+			media.play();
+			MostrarBoton('rec');
+		}
+  }
+
+  // Funcion que se ejecuta cuando se pulsa Play2
+  //
+  function Play2() {
+		console.log('Se ha pulsado Play2');
+		media = new Media('http://audio.ibeat.org/content/p1rj1s/p1rj1s_-_rockGuitar.mp3', onSuccess2, onError2);
+		media.play();
+  }
+
+	function onSuccess2(){
+		document.getElementById('resultado').innerHTML = 'Reproducci&oacute;n correcta.';
+  }
+	function onError(error) {
+		var s = 'Se ha producido un error al reproducir la canci&oacute;<br />' +
+						'Mensaje de error: ' + error.message + '<br />' +
+						'C&oacute;odigo de error: ' + error.code + '<br />';
+		document.getElementById('resultado').innerHTML = s;
+	}
+	
+
+
+  /////////////////////////////
+	// fin de nuestro codigo
+  /////////////////////////////
+
+</script>
+
+
+
+</body>
+</html>
