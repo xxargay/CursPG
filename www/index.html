@@ -1,153 +1,66 @@
 <!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2014 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
 <html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="format-detection" content="telephone=no" />
-  <meta name="msapplication-tap-highlight" content="no" />
-  <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
-  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-  <link rel="stylesheet" type="text/css" href="css/index.css" />
-
-  <title>Br&uacute;jula</title>
-
-</head>
-<body>
-
-
-<div class="app">
-	<div id="deviceready" class="blink">
-		<p class="event listening">Conectando al Dispositivo</p>
-	</div>
-	<h1>Br&uacute;jula</h1>
-	<div id="ready">
-		
-		<!-- Nuestro contenido HTML -->
-		<div class="botones">
-			<button type="button" id="start">Empezar</button> <button type="button" id="stop">Parar</button> <button type="button" id="mirar">Mirar</button><br />
-		</div>
-		<p class="resultado">
- 			Posici&oacute;n<br />
- 			<span id="resultado">Br&uacute;jula parada</span><br />
-		</p>
-		<div id="brujula">
-			<div class="cardinal" id="norte">N</div>
-			<div class="cardinal" id="sur">S</div>
-			<div class="cardinal" id="este">E</div>
-			<div class="cardinal" id="oeste">O</div>
-		</div>
-
-		<!-- Fin de nuestro contenido HTML -->
-
-
-	</div>
-</div>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Hello World</title>
+    </head>
+    <body>
+        <div class="app">
+            <h1>PhoneGap</h1>
+            <div id="deviceready" class="blink">
+                <p class="event listening">Connecting to Device</p>
+                <p class="event received">Device is Ready</p>
+                
+                <a href="acc0.html">acc0.html</a>
+                <a href="acc1.html">acc1.html</a>
+                <a href="accXX.html">accXX.html</a>
+                <a href="ajax.html">ajax.html</a>                
+                <a href="batt.html">batt.html</a>
+                <a href="brow.html">brow.html</a>
+                <a href="camr.html">camr.html</a>
+                <a href="comp.html">comp.html</a>
+                <a href="cont.html">cont.html</a>
+                <a href="glob.html">glob.html</a>
+                <a href="geol.html">geol.html</a>
+                <a href="info.html">info.html</a>
+                <a href="medi.html">medi.html</a>
+                <a href="noti.html">noti.html</a>
+                <a href="vibr.html">info.html</a>
 
 
 
 
-
-
-<script type="text/javascript" src="cordova.js"></script>
-<script type="text/javascript">
-
-	document.addEventListener('deviceready', onDeviceReady, false);
-
-	// nuestro codigo
-	var idBrujula = null;
-	var ancho = window.innerWidth - 100;
-
-  // el dispositivo esta listo
-  //
-	function onDeviceReady()
-	{
-		document.getElementById('deviceready').setAttribute('style', 'display:none;');
-		document.getElementById('ready').setAttribute('style', 'display:block;');
-		
-		document.getElementById('start').addEventListener("click", Empezar);
-		document.getElementById('stop').addEventListener("click", Parar);
-		document.getElementById('mirar').addEventListener("click", Mirar);
-	}
-
-
-    // Empezar a coger datos de la brujula
-    //
-    function Empezar() {
-    		console.log('Se ha pulsado Empezar');
-    		if (!idBrujula) {
-	    		console.log('Se pide mirar la posicion');
-	        // Se actualiza cada 300 milisegundos
-	        var opciones = { frequency: 300 };
-	        idBrujula = navigator.compass.watchHeading(onSuccess, onError, opciones);
-	    		console.log('Id = ' + idBrujula);
-	      }
-    }
-
-    // Parar
-    //
-    function Parar() {
-    		console.log('Se ha pulsado Parar');
-        if (idBrujula) {
-            navigator.compass.clearWatch(idBrujula);
-            idBrujula = null;
-		        document.getElementById('resultado').innerHTML = 'Br&uacute;jula parada';
-            
-        }
-    }
-
-    // Mirar los datos de la brujula
-    //
-    function Mirar() {
-    		console.log('Se ha pulsado Mirar');
-    		if (!idBrujula) {
-	    		console.log('Se pide mirar la posicion');
-	        navigator.compass.getCurrentHeading(onSuccess, onError);
-	      }
-    }
-
-		function AsignarPosicion(grados,cardinal,n){
-			grados %= 360;
-			var rad = 2*Math.PI*grados/360;
-			var x = Math.round(ancho/2 * (Math.cos(rad)+1));
-			var y = Math.round(ancho - Math.round(ancho/2 * (Math.sin(rad)+1)));
-  		// s += '<br />';
-			// s += ' ' + grados + ' grados = ' + rad + 'radianes<br>';
-			// s += 'x = ' + x + '<br>';
-			// s += 'y = ' + y + '<br>';
-			document.getElementById( cardinal ).style.left = (x-15) + 'px' ;
-			document.getElementById( cardinal ).style.top = ((y -n*30)-15) + 'px';
-		}
-
-    // onSuccess: Obtiene la posicion actual
-    //
-    function onSuccess(heading) {
-  		var s = 'Apunta a: ' + heading.magneticHeading;
-  		console.log(s);
-      document.getElementById('resultado').innerHTML = s;
-			document.getElementById('brujula').setAttribute('style', 'display:block;');
-			
-			document.getElementById('brujula').style.width = Math.round(ancho) + "px";
-			document.getElementById('brujula').style.height = Math.round(ancho) + "px";
-			document.getElementById('brujula').style.margin = "50px";
-			var gradosNorte = 90 + heading.magneticHeading;
-			AsignarPosicion( gradosNorte, 'norte', 0 );
-			AsignarPosicion( gradosNorte + 180, 'sur', 1 );
-			AsignarPosicion( gradosNorte - 90, 'este', 2 );
-			AsignarPosicion( gradosNorte + 90, 'oeste', 3 );
-			
-			// document.getElementById('norte').style.left= x + 'px';
-			// document.getElementById('norte').style.top= y + 'px';
-    }
-
-    // onError: Fallo al obtener la posicion
-    //
-    function onError(compassError) {
-        alert('Error br&uacute;jula: ' + compassError.code);
-    }
-
-
-</script>
-
-
-
-</body>
+            </div>
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+    </body>
 </html>
