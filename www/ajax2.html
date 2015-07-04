@@ -25,7 +25,8 @@
 
 		<div class="botones">
 			<button type="button" id="carga-prueba">Fitxer de prova</button><br />
-			<button type="button" id="carga-a">Fitxer remot</button><br /><br />
+			<button type="button" id="carga-a">Fitxer remot 1</button><br /><br />
+			<button type="button" id="carga-b">Fitxer remot 2</button><br /><br />
 			<a href="http://media-bro.com/robots.txt">URL</a>
 		</div>
 		<p class="resultado">
@@ -74,6 +75,11 @@
 			"click",
 			// function(){ CargaFicheroLocal('resultado','cont/prova2.html'); }
 			function(){ CargaFicheroLocal('resultado','http://media-bro.com/robots.txt'); }
+		);
+		document.getElementById('carga-b').addEventListener(
+			"click",
+			// function(){ CargaFicheroLocal('resultado','cont/prova2.html'); }
+			function(){ CargaFicheroLocal('resultado','http://www.w3schools.com/angular/customers.php'); }
 		);
 	
 
