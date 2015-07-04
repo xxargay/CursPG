@@ -24,8 +24,8 @@
 		<!-- Nuestro contenido HTML -->
 
 		<div class="botones">
-			<button type="button" id="carga-prueba">Carga fichero prueba</button><br />
-			<button type="button" id="carga-a">Carga fichero 1</button><br /><br />
+			<button type="button" id="carga-prueba">Fitxer de prova</button><br />
+			<button type="button" id="carga-a">Fitxer remot</button><br /><br />
 			<a href="http://media-bro.com/robots.txt">URL</a>
 		</div>
 		<p class="resultado">
@@ -52,21 +52,15 @@
 	// nuestro codigo
   /////////////////////////////
 
-  
+/************************************************************************
 	var elts = document.getElementsByTagName('a');
-
-
 	var Deshabilitar = function() { 
-			CargaFicheroLocal('resultado', this.href);
-			
+			CargaFicheroLocal('resultado', this.href);		
 	 }
-
-
 	for (var i = elts.length - 1; i >= 0; --i) {
-
-		elts[i].onclick = Deshabilitar;
-		
+		elts[i].onclick = Deshabilitar;	
 	}
+************************************************************************/
   
   // funcion que se ejecuta cuando el dispositivo esta listo
   //
@@ -75,28 +69,20 @@
 		document.getElementById('deviceready').setAttribute('style', 'display:none;');
 		document.getElementById('ready').setAttribute('style', 'display:block;');
 		
+
+
 		document.getElementById('carga-prueba').addEventListener(
 			"click",
-			function(){ CargaFicheroLocal('resultado','prueba.html'); }
+			function(){ CargaFicheroLocal('resultado','prova.html'); }
 		);
 		document.getElementById('carga-a').addEventListener(
 			"click",
-			// function(){ CargaFicheroLocal('resultado','contenido/1.html'); }
+			// function(){ CargaFicheroLocal('resultado','cont/prova2.html'); }
 			function(){ CargaFicheroLocal('resultado','http://media-bro.com/robots.txt'); }
 		);
 	}
 
-    // Funcion que se ejecuta cuando se pulsa Empezar
-    //
-    function Empezar() {
-		CargaFicheroLocal('resultado','contenido/1.html');
-    }
 
-    // Funcion que se ejecuta cuando se pulsa Parar
-    //
-    function Parar() {
-    	// codigo
-    }
 
 	
 	function CargaFicheroLocal(idTag,fichero)
