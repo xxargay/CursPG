@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+  <link rel="stylesheet" type="text/css" href="css/index.css" />
+
+  <title>Carga de ficheros</title>
+
+</head>
+<body>
+
+
+<div class="app">
+	<div id="deviceready" class="blink">
+		<p class="event listening">Conectando al Dispositivo</p>
+	</div>
+	<h1>Carga de ficheros</h1>
+	<div id="ready">
+
+		<!-- Nuestro contenido HTML -->
+
+		<div class="botones">
+			<button type="button" id="carga-prueba">Carga fichero prueba</button><br /><br />
+			<button type="button" id="carga-parametros">Carga contenido din&aacute;mico</button><br /><br />
+			<button type="button" id="carga-a">Carga fichero 1</button><br /><br /><br />
+			<a href="http://media-bro.com/robots.txt">URL externa</a><br /><br />
+			<a href="http://media-bro.com/no-existe.php">URL 404</a><br /><br />
+			<a href="http://dominioinexistente.com/prueba.php">URL err&oacute;nea</a><br /><br />
+		</div>
+		<p class="resultado">
+ 			<span id="resultado">No hay cargado nada</span><br />
+		</p>
+
+		<!-- Fin de nuestro contenido HTML -->
+
+	</div>
+</div>
+
+
+
+
+
+</div>
+
+
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript">
+
+  document.addEventListener('deviceready', onDeviceReady, false);
+  /////////////////////////////
+	// nuestro codigo
+  /////////////////////////////
+
+  
+	var elts = document.getElementsByTagName('a');
+	for (var i = elts.length - 1; i >= 0; --i) {
+		elts[i].onclick = function (e){
+			e.preventDefault();
+			CargaURLoFicheroLocal('resultado',this.getAttribute('href'));
+			return false;
+		}
+	}
+  
+  // funcion que se ejecuta cuando el dispositivo esta listo
+  //
+	function onDeviceReady()
+	{
+		document.getElementById('deviceready').setAttribute('style', 'display:none;');
+		document.getElementById('ready').setAttribute('style', 'display:block;');
+		
+		document.getElementById('carga-prueba').addEventListener(
+			"click",
+			function(){ CargaURLoFicheroLocal('resultado','prova.html'); }
+		);
+		document.getElementById('carga-parametros').addEventListener(
+			"click",
+			function(){ CargaURLoFicheroLocal('resultado','http://media-bro.com/cursos/phonegap/tabla-multiplicar.php','numero=6'); }
+		);
+		document.getElementById('carga-a').addEventListener(
+			"click",
+			// function(){ CargaURLoFicheroLocal('resultado','contenido/1.html'); }
+			function(){ CargaURLoFicheroLocal('resultado','http://media-bro.com/robots.txt'); }
+		);
+	}
+
+    // Funcion que se ejecuta cuando se pulsa Empezar
+    //
+    function Empezar() {
+		CargaURLoFicheroLocal('resultado','contenido/1.html');
+    }
+
+    // Funcion que se ejecuta cuando se pulsa Parar
+    //
+    function Parar() {
+    	// codigo
+    }
+
+	
+	function CargaURLoFicheroLocal(idTag,URLoFichero,parametros)
+	{
+		var xmlhttp;
+		if (window.XMLHttpRequest){ // code for IE7+, Firefox, Chrome, Opera, Safari
+			xmlhttp=new XMLHttpRequest();
+		}
+		else {// code for IE6, IE5
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		document.getElementById(idTag).innerHTML = '';
+
+/*
+		readyState	Holds the status of the XMLHttpRequest. Changes from 0 to 4: 
+		0: request not initialized 
+		1: server connection established
+		2: request received 
+		3: processing request 
+		4: request finished and response is ready
+*/
+		// funcion que se llama cada vez que cambia readyState. 
+		xmlhttp.onreadystatechange=function(){
+			// Solo nos interesa cuando ha acabado, es decir readyState==4
+			if (xmlhttp.readyState==4){
+				if(xmlhttp.status==200){
+					// se ha obtenido el contenido correctamente
+	      	document.getElementById(idTag).innerHTML = xmlhttp.responseText;
+	      }else{
+					document.getElementById(idTag).innerHTML = 'Error cargando el contenido de ' + URLoFichero +
+							'<br />C&oacute;digo de respuesta HTTP:' + xmlhttp.status;
+	      }
+			}
+		};
+		xmlhttp.onerror=function(e){
+			// no esta disponible en todos los navegadores
+			// por desgracia el de phonegap en Android (al menos) es uno de ellos
+			document.getElementById(idTag).innerHTML = 'Error cargando el contenido de ' + URLoFichero +
+							'<br />C&oacute;digo de error:' + e.error;
+		}
+		xmlhttp.open("POST",URLoFichero,true);
+		if( typeof parametros !== 'undefined' ){
+			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			xmlhttp.setRequestHeader("Content-length", parametros.length);
+			xmlhttp.setRequestHeader("Connection", "close");
+			xmlhttp.send( parametros ); // llamada con parametros
+		}else{
+			xmlhttp.send(); // llamada sin parametros
+		}
+	}
+	
+
+
+	
+  /////////////////////////////
+	// fin de nuestro codigo
+  /////////////////////////////
+
+
+
+</script>
+
+
+
+</body>
+</html>

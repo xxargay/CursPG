@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+function inici(){  // // // // // // // // INICI
+
+
+    document.getElementById('boto1').addEventListener("click", function(){ 
+        carregarFitxer('resultat', this.value ); 
+    });
+    document.getElementById('boto2').addEventListener("click", function(){ 
+        carregarFitxer('resultat', this.value ); 
+    });
+    document.getElementById('boto3').addEventListener("click", function(){ 
+        carregarFitxer('resultat', this.value ); 
+    });
+	
+	var URL;
+	
+    function carregarFitxer(id,value) {
+	
+	  val = value ;
+	  
+	  URL = 'http://biblioteca.paugargallo.cat/ex_AJAX_JSON_2.php'; 
+	  
+      var xmlhttp;
+
+      if (window.XMLHttpRequest) {
+          // code for IE7+, Firefox, Chrome, Opera, Safari
+          xmlhttp=new XMLHttpRequest();
+      }
+      else {
+        // code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+
+      xmlhttp.onreadystatechange=function() {
+
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+            
+			dades = JSON.parse(xmlhttp.responseText);
+
+			//document.getElementById(id).innerHTML=dades[0];
+			//document.getElementById(id).innerHTML=dades.red;
+			for (i in dades){
+			
+				document.getElementById(id).innerHTML+=dades[i] + "<br/>";
+				
+				}
+			
+          } else {
+            document.getElementById(id).innerHTML=""; 
+          }
+
+      }
+
+      xmlhttp.open("GET", URL, true);
+      xmlhttp.send();
+
+    }
+
+} // // // // // // // // FI d'INICI
+
+
+</script>
+</head>
+
+
+
+<body style="font-family:monospace;" onload="inici()">
+
+  <button id="boto1" value="red" type="button">Carregar URL de text (red)</button>
+  <button id="boto2" value="white" type="button">Carregar URL de text (white)</button>
+  <button id="boto3" value="all" type="button">Carregar URL de text (all)</button>
+  
+<!--
+  <a id="a1" href="cont/prova2.html">Carregar URL de text (local)</a>
+-->
+
+  <br /><br /><br />
+  <div id="resultat">Substituir aquest text per un altre</div>
+
+  <br /><br /><br />
+  <div id="propietats"></div>
+
+</body>
+</html>
