@@ -143,7 +143,7 @@
 			xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 			xmlhttp.setRequestHeader("Content-length", parametros.length);
 			xmlhttp.setRequestHeader("Connection", "close");
-			xmlhttp.send( parametros ); // llamada con parametros
+			xmlhttp.send( "?" + parametros ); // llamada con parametros
 		}else{
 			xmlhttp.send(); // llamada sin parametros
 		}
